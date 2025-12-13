@@ -2,17 +2,21 @@
 #include <string>
 #include <fstream>
 #include <algorithm>
+#include <ctime>
 
 using namespace std;
 
 struct Student
 {
-    int id;
+    string id;
     string name;
-    float gpa;
+    float resultAverage;
 };
 
 const int MAX = 100;
+
+time_t now = time(0);
+tm *localt = localtime(&now);
 
 Student students[MAX];
 int pupils = 0;
@@ -34,7 +38,7 @@ Student pop()
     {
         return undo[top--];
     }
-    return {-1, ""};
+    return Student();
 }
 
 void Add()
@@ -46,14 +50,16 @@ void Add()
     }
 
     Student s;
-    cout << "\nEnter Student ID: ";
-    cin >> s.id;
+    cout << "Enter Student Name: \n";
     cin.ignore();
-    cout << "Enter Student Name: ";
     getline(cin, s.name);
-    cout << "\nEnter gpa: ";
-    cin >> s.gpa;
+    cout << "Enter resultAverage: \n";
+    cin >> s.resultAverage;
 
+    s.id = to_string(1900 + localt->tm_year) + "-" +
+           to_string(1 + localt->tm_mon) + "-" +
+           to_string(localt->tm_mday) + "-" +
+           to_string(pupils + 1);
     students[pupils++] = s;
     push(s);
 
@@ -72,7 +78,6 @@ void Last()
     {
         if (students[i].id == last.id)
         {
-
             for (int j = i; j < pupils - 1; j++)
             {
                 students[j] = students[j + 1];
@@ -108,7 +113,7 @@ void Sort(int a)
         {
             for (int j = 0; j < pupils - i - 1; j++)
             {
-                if (students[j].gpa > students[j + 1].gpa)
+                if (students[j].resultAverage > students[j + 1].resultAverage)
                 {
                     Student temp = students[j];
                     students[j] = students[j + 1];
@@ -116,7 +121,7 @@ void Sort(int a)
                 }
             }
         }
-        cout << "\nStudents sorted by GPA!\n";
+        cout << "\nStudents sorted by resultAverage!\n";
     }
     else if (a == 4)
     {
@@ -146,13 +151,16 @@ void Display()
     cout << "\n--- Student List ---\n";
     for (int i = 0; i < pupils; i++)
     {
-        cout << students[i].id << " - " << students[i].name << " - " << students[i].gpa << endl;
+        cout << students[i].id << " - " << students[i].name << " - " << students[i].resultAverage << endl;
     }
 }
 
 void SaveToCSVFile()
 {
-    ofstream file("students.csv");
+    string filename = to_string(1900 + localt->tm_year) + "-" +
+                      to_string(1 + localt->tm_mon) + "-" +
+                      to_string(localt->tm_mday) + "-";
+    ofstream file(filename + "applicants.csv");
     if (!file.is_open())
         return;
     sort(students, students + pupils, [](const Student &a, const Student &b)
@@ -160,29 +168,60 @@ void SaveToCSVFile()
     for (int i = 0; i < pupils; ++i)
     {
         auto &s = students[i];
-        file << s.id << "," << s.name << "," << s.gpa << "\n";
+        file << s.id << "," << s.name << "," << s.resultAverage << "\n";
     }
 }
 
 void LoadFromCSVFile()
 {
-    ifstream file("students.csv");
+    string filename = to_string(1900 + localt->tm_year) + "-" +
+                      to_string(1 + localt->tm_mon) + "-" +
+                      to_string(localt->tm_mday) + "-";
+    ifstream file(filename + "applicants.csv");
     if (!file.is_open())
         return;
-    pupils = 0;
     string line;
-    while (getline(file, line) && pupils < MAX)
+    while (getline(file, line))
     {
         size_t pos1 = line.find(',');
         size_t pos2 = line.find(',', pos1 + 1);
         if (pos1 == string::npos || pos2 == string::npos)
             continue;
         Student s;
-        s.id = stoi(line.substr(0, pos1));
+        s.id = line.substr(0, pos1);
         s.name = line.substr(pos1 + 1, pos2 - pos1 - 1);
-        s.gpa = stof(line.substr(pos2 + 1));
+        s.resultAverage = stof(line.substr(pos2 + 1));
         students[pupils++] = s;
+        push(s);
     }
+}
+
+void ShortlistPasser()
+{
+    cout << "Passing grade threshold: ";
+    float passingGrade;
+    cin >> passingGrade;
+
+    cout << "\n--- Passer Students ---\n";
+    for (int i = 0; i < pupils; i++)
+    {
+        if (students[i].resultAverage >= passingGrade)
+        {
+            cout << students[i].id << " - " << students[i].name << " - " << students[i].resultAverage << endl;
+        }
+    }
+
+    // remove non-passers
+    int writeIndex = 0;
+    for (int i = 0; i < pupils; i++)
+    {
+        if (students[i].resultAverage >= passingGrade)
+        {
+            students[writeIndex++] = students[i];
+        }
+    }
+    pupils = writeIndex;
+    cout << "\nNon-passer students removed from the list.\n";
 }
 
 int main()
@@ -198,7 +237,8 @@ int main()
         cout << "4. Sort Students by Name\n";
         cout << "5. Sort Students by Result Average\n";
         cout << "6. Display Students\n";
-        cout << "7. Exit\n";
+        cout << "7. Shortlist Passer\n";
+        cout << "8. Exit\n";
         cout << "Enter choice: ";
         cin >> choice;
         switch (choice)
@@ -209,6 +249,7 @@ int main()
             break;
         case 2:
             Last();
+            SaveToCSVFile();
             break;
         case 3:
         case 4:
@@ -219,11 +260,15 @@ int main()
             Display();
             break;
         case 7:
+            ShortlistPasser();
+            SaveToCSVFile();
+            break;
+        case 8:
             cout << "Exiting program\n";
             break;
         default:
             cout << "Invalid choice!\n";
         }
-    } while (choice != 7);
+    } while (choice != 8);
     return 0;
 }
