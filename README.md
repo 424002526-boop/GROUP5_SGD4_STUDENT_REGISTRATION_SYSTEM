@@ -1,4 +1,5 @@
 Project overview and problem statement:
+
 The Student Registration System is a project developed using the C++ programming language to address common challenges in student registration and applicant management within higher education institutions. The system utilizes fundamental data structures such as arrays and stacks, along with sorting algorithms and file handling techniques, to efficiently store, organize, and manage student records.
 
 
