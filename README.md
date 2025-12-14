@@ -1,107 +1,51 @@
+Project overview and problem statement:
+The Student Registration System is a project developed using the C++ programming language to address common challenges in student registration and applicant management within higher education institutions. The system utilizes fundamental data structures such as arrays and stacks, along with sorting algorithms and file handling techniques, to efficiently store, organize, and manage student records.
 
 
- Registration System is  a console application that  allows users to register students, store information, sort the list and undo the recent registration, which targets the UN Sustainable Development Goals (SGD) 4.
+						
 
-
-
-In many schools, especially smaller institutions and school provinces, student registration and record keeping are still done manually using paper lists or unorganized spreadsheets. This often results in errors, duplicated entries, slow data retrieval, and difficulty in sorting or updating information. There is also no easy way to undo mistakes during data entry.
-
-
-The issue is being addressed  by providing a structured, efficient method to:
-Enter and store information
-Sort the Students information
-Undo wrong information
-Display Student formally.
+The application enables users to register students, automatically generate unique student identification numbers based on the current date, sort student records by different criteria (Student ID, name, and result average), shortlist qualified applicants, undo the most recent registration, and store data persistently using CSV files. The system is designed with a fixed capacity of 100 students per day, reflecting realistic operational constraints in public universities.
+This project aligns with the United Nations Sustainable Development Goal (SDG) 4: Quality Education, specifically:
+SDG 4.3: Ensuring equal access for all to affordable and quality tertiary education.
+SDG 4.a: Improving education systems through student-centered and inclusive administrative solutions.
+By introducing a structured and automated registration process, the system supports educational institutions in improving efficiency, accuracy, and accessibility in student admissions.
 
 
 
-1. Array for Storing Students (students[MAX])
 
-Type: Student students[MAX];
 
-Description:
-The students array stores the student records. It is declared with a fixed size of MAX = 100, which limits the number of students the program can handle at any given time.
+State universities in the Philippines consistently face challenges in managing student registration and applicant screening due to limited manpower, budget constraints, and a high volume of applicants. According to reports from the Commission on Higher Education (CHED), state universities and colleges (SUCs) accommodate thousands of applicants each academic year, often with administrative offices operating using manual or semi-digital systems. These conditions place significant pressure on registration staff and existing infrastructure.
+In many state universities, registration processes are conducted based on fixed schedules with limited daily capacity. This results in long queues, overcrowded registration areas, delayed processing of student records, and increased likelihood of data entry errors. During peak enrollment periods, it is common for applicants to spend several hours waiting for their registration to be processed, while administrators struggle to organize, sort, and validate student information efficiently.
+Furthermore, the lack of automated sorting and filtering mechanisms makes it difficult for institutions to quickly identify qualified applicants based on academic performance. Manual record handling also increases the risk of misplaced data and inconsistent record keeping, which can negatively affect both students and administrators.
+This capstone project addresses these documented challenges by developing a Student Registration Sorting System capable of accommodating up to 100 students per day, even within a limited scheduling framework. By automating student registration, sorting, shortlisting, and data storage, the system provides a practical solution that reduces administrative workload, minimizes errors, and improves the overall efficiency and reliability of the registration process in Philippine state universities.
 
-Justification:
 
-Fixed Size: The use of an array is suitable here as the program assumes the number of students will not exceed MAX (100).
 
-Efficiency: Arrays provide constant-time access (O(1)) to elements, making operations like adding, displaying, and sorting efficient.
+INSTALLATION AND SET UP:
 
-Simplicity: Arrays are a straightforward choice for managing a collection of student records where the maximum size is known ahead of time.
+1.Open VS Code.
+2.Select the Extensions view icon on the Activity Bar or use the keyboard shortcut (Ctrl+Shift+X).
+3.Search for 'C++'.
+4. Select Install.
+5. Check if you have a compiler installed, to check Open a new VS Code terminal window using (Ctrl+Shift+`) Use the following command to check for the GCC compiler g++:  g++ --version then clang --version
+if you dont have a compiler kindly install
 
-2. Stack for Undo Operations (undo[MAX])
 
-Type: Student undo[MAX];
 
-Description:
-The undo array functions as a stack, used to store students' data temporarily for undoing the last student registration.
 
-Justification:
 
-Last In, First Out (LIFO): The stack implements the LIFO principle, ideal for undo functionality. The most recently added student can be removed first to reverse the last registration.
 
-Efficient Management of Undo: By storing each new student in the stack, the program can easily "rollback" the last action without altering the main list of students.
+HOW TO USE REGISTRATION SYSTEM
+if you run the code you will see menu that has 8 choices
+1 to register a student, you will input your name and result. it will automatically create you a id
+2 is to undo last registered student
+3,4,and 5is you can sort all the registered student by its id, name, results
+6 is to display the list on your prefered list(alphabetically, by id, or by grades).
+7 is to have a shortlist of student who pass the examination, here you will require a grade to remove all failing student.
+8 to exit the program. Dont worry the list will not going to vanish because all the student registered is in the csv file.
 
-3. Integer Variable for Tracking Number of Students (pupils)
 
-Type: int pupils;
+This project is made by Mr. John Albert David.
 
-Description:
-The pupils variable keeps track of the current number of students in the students array. It is incremented as new students are added.
 
-Justification:
 
-Dynamic Counter: This variable ensures that the program doesn't exceed the bounds of the students array, and it enables correct indexing for adding and displaying student records.
-
-Simple and Effective: It allows for the dynamic management of student records without needing to dynamically allocate memory, making the program straightforward to implement.
-
-4. Integer for Managing Stack Top (top)
-
-Type: int top;
-
-Description:
-The top variable tracks the top index of the stack (undo array), indicating the most recent operation that can be undone.
-
-Justification:
-
-Stack Management: The top variable ensures that the stack operations (push and pop) are handled correctly. It is initialized to -1, indicating an empty stack, and is incremented or decremented as students are added or removed.
-
-Efficient Undo: The top variable makes stack operations efficient and enables quick rollback of the last student addition.
-
-5. Dynamic Sorting Mechanism Using Arrays
-
-Description:
-The program uses a bubble sort algorithm to sort the student records by student ID, name, or GPA. The sorting is performed in-place (directly on the students array).
-
-Justification:
-
-Bubble Sort: Although bubble sort has O(n²) time complexity, it is appropriate for small datasets, such as the list of students in this program (limited to MAX = 100 students).
-
-In-place Sorting: Sorting is performed directly on the students array, which saves memory compared to creating a separate sorted copy.
-
-Simplicity: The bubble sort is simple to implement and is sufficient for the size of data handled by this program. For larger datasets, a more efficient sorting algorithm (like quicksort) could be considered.
-
-6. File I/O with Arrays
-
-Description:
-The program saves and loads student data to/from a CSV file using file input/output (I/O) operations. The student data is read into the students array and written back after changes.
-
-Justification:
-
-Persistence: File I/O ensures that student records are preserved across program runs, making the data persistent.
-
-Efficient Storage: The students array is already in memory, so using it to store and manipulate student records before saving them to a file is both memory-efficient and straightforward.
-
-Ease of Parsing: The CSV format is simple to parse, and the array provides an easy way to map each CSV record to a corresponding Student object.
-
-7. Sorting Using Standard Library sort Function
-
-Description:
-The program uses the C++ standard library's sort() function to sort the student records by student ID when saving them to a CSV file.
-
-Justification:
-
-Optimal Sorting: The sort() function in the C++ Standard Library uses efficient algorithms like quicksort or introsort, which provides better performance than bubble sort (O(n log n)).
-
-Library Integration: The sort() function is simple to use and reduces the complexity of implementing sorting manually. It improves performance when handling larger datasets, especially when saving to a file.
